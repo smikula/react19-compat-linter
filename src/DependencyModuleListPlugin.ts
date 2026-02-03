@@ -17,10 +17,9 @@ export class DependencyModuleListPlugin {
                 },
                 async () => {
                     const modules: string[] = [];
-
                     for (const module of compilation.modules) {
                         const resource = (module as NormalModule).resource;
-                        if (resource) {
+                        if (resource && shouldIncludeModule(resource)) {
                             modules.push(resource);
                         }
                     }
@@ -31,4 +30,9 @@ export class DependencyModuleListPlugin {
             );
         });
     }
+}
+
+const jsExtensions = /\.(js|jsx|ts|tsx|mjs|cjs)$/i;
+function shouldIncludeModule(resource: string): boolean {
+    return jsExtensions.test(resource) && resource.includes('node_modules');
 }
