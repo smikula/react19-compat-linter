@@ -1,11 +1,15 @@
-import { TSESLint } from '@typescript-eslint/utils';
 import { noRestrictedImports } from './no-restricted-imports';
 
-const ruleTester = new TSESLint.RuleTester({
-    parser: require.resolve('@typescript-eslint/parser'),
-    parserOptions: {
-        ecmaVersion: 2020,
-        sourceType: 'module',
+import { RuleTester } from '@typescript-eslint/rule-tester';
+import * as parser from '@typescript-eslint/parser';
+
+const ruleTester = new RuleTester({
+    languageOptions: {
+        parser,
+        parserOptions: {
+            ecmaVersion: 2020,
+            sourceType: 'module',
+        },
     },
 });
 

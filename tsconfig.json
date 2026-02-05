@@ -1,13 +1,14 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
+        "module": "nodenext",
         "target": "es2015",
         "declaration": true,
         "sourceMap": false,
         "outDir": "lib",
         "strict": true,
         "esModuleInterop": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "isolatedModules": true
     },
     "exclude": ["node_modules", "lib"],
     "include": ["src/**/*"]
