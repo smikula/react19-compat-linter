@@ -1,5 +1,6 @@
 import webpack, { Compilation, NormalModule } from 'webpack';
-import { writeFile } from 'fs/promises';
+import { writeFile, mkdir } from 'fs/promises';
+import { dirname } from 'path';
 
 export class DependencyModuleListPlugin {
     private filePath: string;
@@ -25,6 +26,7 @@ export class DependencyModuleListPlugin {
                     }
 
                     const jsonContent = JSON.stringify(modules, null, 2);
+                    await mkdir(dirname(this.filePath), { recursive: true });
                     await writeFile(this.filePath, jsonContent, 'utf-8');
                 }
             );
