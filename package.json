@@ -4,6 +4,9 @@
     "description": "Utility to validate project depedencies are React 19 compatible",
     "main": "./lib/index.js",
     "typings": "./lib/index.d.ts",
+    "bin": {
+        "react19-compat-linter": "./bin/react19-compat-linter.js"
+    },
     "scripts": {
         "build": "tsc",
         "test": "jest"
