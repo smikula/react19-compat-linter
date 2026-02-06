@@ -48,5 +48,8 @@ Or integrate it into your build via the API:
 
 ```javascript
 const { runLinter } = require('react19-compat-linter');
-runLinter('./modules-list.json');
+
+runLinter('./modules-list.json').then(result => {
+  console.log(`Found violations in ${result.packages.length} packages.`);
+});
 ```

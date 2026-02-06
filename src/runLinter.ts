@@ -1,7 +1,9 @@
 import { ESLint } from 'eslint';
 import * as path from 'path';
+import { extractPackageName } from './utils/extractPackageName';
+import type { LinterFileResult, LinterPackageResult, LinterResult } from './types';
 
-export async function runLinter(modulesList: string) {
+export async function runLinter(modulesList: string): Promise<LinterResult> {
     const eslint = new ESLint({
         overrideConfigFile: path.resolve(__dirname, './eslint.config.js'),
         ignorePatterns: ['!**/node_modules/'],
@@ -20,12 +22,37 @@ export async function runLinter(modulesList: string) {
         }))
         .filter(result => result.messages.length > 0);
 
-    console.log(`Found ${results.length} files with violations:\n`);
-    results.forEach(result => {
-        console.log(`${result.filePath}:`);
-        result.messages.forEach(msg => {
-            console.log(`  ${msg.line}:${msg.column} - ${msg.message}`);
-        });
-        console.log('');
-    });
+    const files: LinterFileResult[] = results.map(result => ({
+        filePath: result.filePath,
+        violations: result.messages.map(msg => ({
+            line: msg.line,
+            column: msg.column,
+            message: msg.message,
+        })),
+    }));
+
+    // Group files by package
+    const packageMap = new Map<string, LinterFileResult[]>();
+    for (const file of files) {
+        const packageName = extractPackageName(file.filePath);
+        if (!packageMap.has(packageName)) {
+            packageMap.set(packageName, []);
+        }
+        packageMap.get(packageName)!.push(file);
+    }
+
+    // Convert to array of package results
+    const packages: LinterPackageResult[] = Array.from(packageMap.entries()).map(
+        ([packageName, files]) => ({
+            packageName,
+            files,
+        })
+    );
+
+    // Sort packages by name for consistent output
+    packages.sort((a, b) => a.packageName.localeCompare(b.packageName));
+
+    return {
+        packages,
+    };
 }
