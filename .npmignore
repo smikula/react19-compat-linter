@@ -1,9 +1,9 @@
-# Source files - don't publish
+# Source files
 src/
 *.test.js
 *.test.d.ts
 
-# Development config - don't publish
+# Development config
 tsconfig.json
 jest.config.js
 .prettierrc
