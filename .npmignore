@@ -1,0 +1,25 @@
+# Source files - don't publish
+src/
+*.test.js
+*.test.d.ts
+
+# Development config - don't publish
+tsconfig.json
+jest.config.js
+.prettierrc
+.prettierignore
+
+# Documentation for development only
+CLAUDE.md
+
+# System files
+.DS_Store
+.git/
+.gitignore
+.husky/
+node_modules/
+
+# Build artifacts not needed in published package
+npm-debug.log
+yarn-error.log
+settings.local.json

@@ -9,7 +9,36 @@
     },
     "scripts": {
         "build": "tsc",
-        "test": "jest"
+        "test": "jest",
+        "prepublishOnly": "yarn test && yarn build"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/smikula/react19-compat-linter.git"
+    },
+    "bugs": {
+        "url": "https://github.com/smikula/react19-compat-linter/issues"
+    },
+    "homepage": "https://github.com/smikula/react19-compat-linter#readme",
+    "keywords": [
+        "react",
+        "react19",
+        "compatibility",
+        "linter",
+        "eslint",
+        "webpack",
+        "migration",
+        "deprecated",
+        "react-dom"
+    ],
+    "files": [
+        "lib/",
+        "bin/",
+        "README.md",
+        "LICENSE"
+    ],
+    "engines": {
+        "node": ">=18.0.0"
     },
     "author": "Scott Mikula <mikula@gmail.com>",
     "dependencies": {
