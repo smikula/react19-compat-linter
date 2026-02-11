@@ -67,9 +67,12 @@ async function groupFilesByPackage(files: LinterFileResult[]): Promise<LinterPac
     const packageMap = new Map<string, PackageMapEntry>();
 
     for (const file of files) {
-        const { packageName, packageJsonPath } = parseFilePath(file.filePath);
+        const { packageName, packageJsonPath, relativeFilePath } = parseFilePath(file.filePath);
         const version = await getPackageVersion(packageJsonPath);
         const key = `${packageName}@${version}`;
+
+        // Overwrite filePath with relative path
+        file.filePath = relativeFilePath;
 
         if (!packageMap.has(key)) {
             packageMap.set(key, {
