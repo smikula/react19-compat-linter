@@ -5,6 +5,12 @@ import { extractPackageName } from './utils/extractPackageName';
 import { getPackageVersion } from './utils/getPackageVersion';
 import type { LinterFileResult, LinterPackageResult, LinterResult } from './types';
 
+interface PackageMapEntry {
+    packageName: string;
+    version: string;
+    files: LinterFileResult[];
+}
+
 export async function runLinter(modulesListPath: string): Promise<LinterResult> {
     const modulesListText = await readFile(modulesListPath, 'utf-8');
     const modulesList: string[] = JSON.parse(modulesListText);
@@ -41,27 +47,25 @@ export async function runLinter(modulesListPath: string): Promise<LinterResult> 
         }),
     }));
 
-    // Group files by package
-    const packageMap = new Map<string, LinterFileResult[]>();
+    // Group files by package and version
+    const packageMap = new Map<string, PackageMapEntry>();
     for (const file of files) {
         const packageName = extractPackageName(file.filePath);
-        if (!packageMap.has(packageName)) {
-            packageMap.set(packageName, []);
+        const version = await getPackageVersion(file.filePath);
+        const key = `${packageName}@${version}`;
+
+        if (!packageMap.has(key)) {
+            packageMap.set(key, {
+                packageName,
+                version,
+                files: [],
+            });
         }
-        packageMap.get(packageName)!.push(file);
+        packageMap.get(key)!.files.push(file);
     }
 
     // Convert to array of package results
-    const packages: LinterPackageResult[] = await Promise.all(
-        Array.from(packageMap.entries()).map(async ([packageName, files]) => {
-            const version = await getPackageVersion(files[0].filePath);
-            return {
-                packageName,
-                version,
-                files,
-            };
-        })
-    );
+    const packages: LinterPackageResult[] = Array.from(packageMap.values());
 
     // Sort packages by name for consistent output
     packages.sort((a, b) => a.packageName.localeCompare(b.packageName));
