@@ -2,6 +2,7 @@ import { ESLint } from 'eslint';
 import * as path from 'path';
 import { readFile } from 'fs/promises';
 import { extractPackageName } from './utils/extractPackageName';
+import { getPackageVersion } from './utils/getPackageVersion';
 import type { LinterFileResult, LinterPackageResult, LinterResult } from './types';
 
 export async function runLinter(modulesListPath: string): Promise<LinterResult> {
@@ -51,10 +52,14 @@ export async function runLinter(modulesListPath: string): Promise<LinterResult> 
     }
 
     // Convert to array of package results
-    const packages: LinterPackageResult[] = Array.from(packageMap.entries()).map(
-        ([packageName, files]) => ({
-            packageName,
-            files,
+    const packages: LinterPackageResult[] = await Promise.all(
+        Array.from(packageMap.entries()).map(async ([packageName, files]) => {
+            const version = await getPackageVersion(files[0].filePath);
+            return {
+                packageName,
+                version,
+                files,
+            };
         })
     );
 
