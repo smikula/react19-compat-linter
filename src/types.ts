@@ -13,6 +13,7 @@ export interface LinterFileResult {
 
 export interface LinterPackageResult {
     packageName: string;
+    version: string;
     files: LinterFileResult[];
 }
 
