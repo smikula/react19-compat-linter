@@ -2,6 +2,8 @@ export interface LinterViolation {
     line: number;
     column: number;
     message: string;
+    importName: string;
+    moduleName: string;
 }
 
 export interface LinterFileResult {

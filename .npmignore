@@ -9,6 +9,9 @@ jest.config.js
 .prettierrc
 .prettierignore
 
+# Sample/test data
+sample/
+
 # Documentation for development only
 CLAUDE.md
 

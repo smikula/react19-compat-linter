@@ -119,7 +119,7 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
                     messageId: 'restrictedNamespaceAccess',
                     data: {
                         importName: 'findDOMNode',
-                        namespace: 'ReactDOM',
+                        moduleName: 'react-dom',
                     },
                 },
             ],
@@ -133,7 +133,7 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
                     messageId: 'restrictedNamespaceAccess',
                     data: {
                         importName: 'render',
-                        namespace: 'ReactDOM',
+                        moduleName: 'react-dom',
                     },
                 },
             ],
@@ -147,7 +147,7 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
                     messageId: 'restrictedDestructuring',
                     data: {
                         importName: 'findDOMNode',
-                        namespace: 'ReactDOM',
+                        moduleName: 'react-dom',
                     },
                 },
             ],
@@ -161,14 +161,14 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
                     messageId: 'restrictedDestructuring',
                     data: {
                         importName: 'render',
-                        namespace: 'ReactDOM',
+                        moduleName: 'react-dom',
                     },
                 },
                 {
                     messageId: 'restrictedDestructuring',
                     data: {
                         importName: 'findDOMNode',
-                        namespace: 'ReactDOM',
+                        moduleName: 'react-dom',
                     },
                 },
             ],

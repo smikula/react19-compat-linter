@@ -10,6 +10,7 @@
     "scripts": {
         "build": "tsc",
         "test": "jest",
+        "sample": "node ./sample/runSample.js",
         "prepublishOnly": "yarn test && yarn build"
     },
     "repository": {
