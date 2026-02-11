@@ -7,9 +7,9 @@ export const noRestrictedImports = ESLintUtils.RuleCreator(f => f)({
         messages: {
             restrictedImport: 'Importing {{importName}} from "{{moduleName}}" is not allowed.',
             restrictedNamespaceAccess:
-                'Accessing {{importName}} from {{namespace}} is not allowed.',
+                'Accessing {{importName}} from "{{moduleName}}" is not allowed.',
             restrictedDestructuring:
-                'Destructuring {{importName}} from {{namespace}} is not allowed.',
+                'Destructuring {{importName}} from "{{moduleName}}" is not allowed.',
         },
         schema: [
             {
@@ -121,7 +121,7 @@ export const noRestrictedImports = ESLintUtils.RuleCreator(f => f)({
                             messageId: 'restrictedNamespaceAccess',
                             data: {
                                 importName: propertyName,
-                                namespace: namespaceName,
+                                moduleName: moduleName,
                             },
                         });
                     }
@@ -159,7 +159,7 @@ export const noRestrictedImports = ESLintUtils.RuleCreator(f => f)({
                                     messageId: 'restrictedDestructuring',
                                     data: {
                                         importName: propertyName,
-                                        namespace: namespaceName,
+                                        moduleName: moduleName,
                                     },
                                 });
                             }
