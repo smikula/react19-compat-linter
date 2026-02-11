@@ -1,0 +1,5 @@
+[
+    "sample/node_modules/sample-package/named-import.js",
+    "sample/node_modules/sample-package/namespace-access.js",
+    "sample/node_modules/sample-package/destructuring.js"
+]
