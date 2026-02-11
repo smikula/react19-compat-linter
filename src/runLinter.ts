@@ -1,7 +1,7 @@
 import { ESLint } from 'eslint';
 import * as path from 'path';
 import { readFile } from 'fs/promises';
-import { extractPackageName } from './utils/extractPackageName';
+import { parseFilePath } from './utils/parseFilePath';
 import { getPackageVersion } from './utils/getPackageVersion';
 import type { LinterFileResult, LinterPackageResult, LinterResult } from './types';
 
@@ -12,19 +12,32 @@ interface PackageMapEntry {
 }
 
 export async function runLinter(modulesListPath: string): Promise<LinterResult> {
-    const modulesListText = await readFile(modulesListPath, 'utf-8');
-    const modulesList: string[] = JSON.parse(modulesListText);
+    const modulesList = await loadModulesList(modulesListPath);
+    const eslint = createLinter();
+    const allResults = await eslint.lintFiles(modulesList);
+    const filteredResults = filterViolationResults(allResults);
+    const files = buildFileResults(filteredResults);
+    const packages = await groupFilesByPackage(files);
 
-    const eslint = new ESLint({
+    return { packages };
+}
+
+async function loadModulesList(modulesListPath: string): Promise<string[]> {
+    const modulesListText = await readFile(modulesListPath, 'utf-8');
+    return JSON.parse(modulesListText);
+}
+
+function createLinter(): ESLint {
+    return new ESLint({
         overrideConfigFile: path.resolve(__dirname, './eslint.config.js'),
         ignorePatterns: ['!**/node_modules/'],
         concurrency: 'auto',
     });
+}
 
-    const allResults = await eslint.lintFiles(modulesList);
-
-    // Filter for results containing the react19-compat-linter/no-restricted-imports rule violation
-    const results = allResults
+function filterViolationResults(allResults: ESLint.LintResult[]): ESLint.LintResult[] {
+    // Filter to only violations related to our no-restricted-imports rule
+    return allResults
         .map(result => ({
             ...result,
             messages: result.messages.filter(
@@ -32,8 +45,10 @@ export async function runLinter(modulesListPath: string): Promise<LinterResult> 
             ),
         }))
         .filter(result => result.messages.length > 0);
+}
 
-    const files: LinterFileResult[] = results.map(result => ({
+function buildFileResults(results: ESLint.LintResult[]): LinterFileResult[] {
+    return results.map(result => ({
         filePath: result.filePath,
         violations: result.messages.map(msg => {
             const { importName, moduleName } = parseViolationMessage(msg.message);
@@ -46,13 +61,18 @@ export async function runLinter(modulesListPath: string): Promise<LinterResult> 
             };
         }),
     }));
+}
 
-    // Group files by package and version
+async function groupFilesByPackage(files: LinterFileResult[]): Promise<LinterPackageResult[]> {
     const packageMap = new Map<string, PackageMapEntry>();
+
     for (const file of files) {
-        const packageName = extractPackageName(file.filePath);
-        const version = await getPackageVersion(file.filePath);
+        const { packageName, packageJsonPath, relativeFilePath } = parseFilePath(file.filePath);
+        const version = await getPackageVersion(packageJsonPath);
         const key = `${packageName}@${version}`;
+
+        // Overwrite filePath with relative path
+        file.filePath = relativeFilePath;
 
         if (!packageMap.has(key)) {
             packageMap.set(key, {
@@ -64,15 +84,10 @@ export async function runLinter(modulesListPath: string): Promise<LinterResult> 
         packageMap.get(key)!.files.push(file);
     }
 
-    // Convert to array of package results
-    const packages: LinterPackageResult[] = Array.from(packageMap.values());
-
-    // Sort packages by name for consistent output
+    const packages = Array.from(packageMap.values());
     packages.sort((a, b) => a.packageName.localeCompare(b.packageName));
 
-    return {
-        packages,
-    };
+    return packages;
 }
 
 function parseViolationMessage(message: string): { importName: string; moduleName: string } {

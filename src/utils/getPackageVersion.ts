@@ -1,10 +1,8 @@
 import { readFile } from 'fs/promises';
-import { getPackageJsonPath } from './getPackageJsonPath';
 
 const versionCache = new Map<string, string>();
 
-export async function getPackageVersion(filePath: string): Promise<string> {
-    const packageJsonPath = getPackageJsonPath(filePath);
+export async function getPackageVersion(packageJsonPath: string): Promise<string> {
     const cachedVersion = versionCache.get(packageJsonPath);
     if (cachedVersion !== undefined) {
         return cachedVersion;
