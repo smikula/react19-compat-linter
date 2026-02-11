@@ -1,7 +1,7 @@
 import { ESLint } from 'eslint';
 import * as path from 'path';
 import { readFile } from 'fs/promises';
-import { extractPackageName } from './utils/extractPackageName';
+import { parseFilePath } from './utils/parseFilePath';
 import { getPackageVersion } from './utils/getPackageVersion';
 import type { LinterFileResult, LinterPackageResult, LinterResult } from './types';
 
@@ -67,8 +67,8 @@ async function groupFilesByPackage(files: LinterFileResult[]): Promise<LinterPac
     const packageMap = new Map<string, PackageMapEntry>();
 
     for (const file of files) {
-        const packageName = extractPackageName(file.filePath);
-        const version = await getPackageVersion(file.filePath);
+        const { packageName, packageJsonPath } = parseFilePath(file.filePath);
+        const version = await getPackageVersion(packageJsonPath);
         const key = `${packageName}@${version}`;
 
         if (!packageMap.has(key)) {
