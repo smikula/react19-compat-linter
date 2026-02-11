@@ -28,11 +28,16 @@ export async function runLinter(modulesListPath: string): Promise<LinterResult> 
 
     const files: LinterFileResult[] = results.map(result => ({
         filePath: result.filePath,
-        violations: result.messages.map(msg => ({
-            line: msg.line,
-            column: msg.column,
-            message: msg.message,
-        })),
+        violations: result.messages.map(msg => {
+            const { importName, moduleName } = parseViolationMessage(msg.message);
+            return {
+                line: msg.line,
+                column: msg.column,
+                message: msg.message,
+                importName,
+                moduleName,
+            };
+        }),
     }));
 
     // Group files by package
@@ -58,5 +63,19 @@ export async function runLinter(modulesListPath: string): Promise<LinterResult> 
 
     return {
         packages,
+    };
+}
+
+function parseViolationMessage(message: string): { importName: string; moduleName: string } {
+    // This regex must match the error messages in no-restricted-imports.ts
+    const match = message.match(
+        /(?:Importing|Accessing|Destructuring) (.+) from "(.+)" is not allowed\./
+    );
+    if (!match) {
+        throw new Error(`Unable to parse violation message: ${message}`);
+    }
+    return {
+        importName: match[1],
+        moduleName: match[2],
     };
 }
