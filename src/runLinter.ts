@@ -1,9 +1,13 @@
 import { ESLint } from 'eslint';
 import * as path from 'path';
+import { readFile } from 'fs/promises';
 import { extractPackageName } from './utils/extractPackageName';
 import type { LinterFileResult, LinterPackageResult, LinterResult } from './types';
 
-export async function runLinter(modulesList: string): Promise<LinterResult> {
+export async function runLinter(modulesListPath: string): Promise<LinterResult> {
+    const modulesListText = await readFile(modulesListPath, 'utf-8');
+    const modulesList: string[] = JSON.parse(modulesListText);
+
     const eslint = new ESLint({
         overrideConfigFile: path.resolve(__dirname, './eslint.config.js'),
         ignorePatterns: ['!**/node_modules/'],
