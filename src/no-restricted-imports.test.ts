@@ -13,71 +13,38 @@ const ruleTester = new RuleTester({
     },
 });
 
-// Common test configuration for react-dom and react restrictions
-const defaultOptions: [{ restrictedImports: { module: string; imports: string[] }[] }] = [
-    {
-        restrictedImports: [
-            {
-                module: 'react-dom',
-                imports: [
-                    'findDOMNode',
-                    'render',
-                    'hydrate',
-                    'unmountComponentAtNode',
-                    'unstable_renderSubtreeIntoContainer',
-                    'unstable_flushControlled',
-                    'unstable_createEventHandle',
-                    'unstable_runWithPriority',
-                ],
-            },
-            {
-                module: 'react',
-                imports: ['createFactory'],
-            },
-        ],
-    },
-];
-
 ruleTester.run('no-restricted-imports', noRestrictedImports, {
     valid: [
         // Allowed imports from react-dom
         {
             code: "import { createPortal } from 'react-dom';",
-            options: defaultOptions,
         },
         {
             code: "import ReactDOM from 'react-dom';",
-            options: defaultOptions,
         },
         {
             code: "import * as ReactDOM from 'react-dom';",
-            options: defaultOptions,
         },
         // Namespace access of allowed methods
         {
             code: "import * as ReactDOM from 'react-dom';\nReactDOM.createPortal();",
-            options: defaultOptions,
         },
         {
             code: "import ReactDOM from 'react-dom';\nReactDOM.createRoot();",
-            options: defaultOptions,
         },
         // Destructuring of allowed methods
         {
             code: "import * as ReactDOM from 'react-dom';\nconst { createPortal } = ReactDOM;",
-            options: defaultOptions,
         },
         // Imports from non-restricted modules
         {
             code: "import { useState } from 'react';",
-            options: defaultOptions,
         },
     ],
     invalid: [
         // Named imports - restricted imports from react-dom
         {
             code: "import { findDOMNode } from 'react-dom';",
-            options: defaultOptions,
             errors: [
                 {
                     messageId: 'restrictedImport',
@@ -91,7 +58,6 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
         // Multiple restricted imports in one statement
         {
             code: "import { findDOMNode, render, createPortal } from 'react-dom';",
-            options: defaultOptions,
             errors: [
                 {
                     messageId: 'restrictedImport',
@@ -112,7 +78,6 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
         // Import with alias
         {
             code: "import { findDOMNode as findNode } from 'react-dom';",
-            options: defaultOptions,
             errors: [
                 {
                     messageId: 'restrictedImport',
@@ -126,7 +91,6 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
         // Namespace access - accessing restricted methods through namespace
         {
             code: "import * as ReactDOM from 'react-dom';\nReactDOM.findDOMNode();",
-            options: defaultOptions,
             errors: [
                 {
                     messageId: 'restrictedNamespaceAccess',
@@ -140,7 +104,6 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
         // Default import with namespace access
         {
             code: "import ReactDOM from 'react-dom';\nReactDOM.render();",
-            options: defaultOptions,
             errors: [
                 {
                     messageId: 'restrictedNamespaceAccess',
@@ -154,7 +117,6 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
         // Destructuring - extracting restricted methods from namespace
         {
             code: "import * as ReactDOM from 'react-dom';\nconst { findDOMNode } = ReactDOM;",
-            options: defaultOptions,
             errors: [
                 {
                     messageId: 'restrictedDestructuring',
@@ -168,7 +130,6 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
         // Multiple destructured properties (mixed restricted and allowed)
         {
             code: "import * as ReactDOM from 'react-dom';\nconst { render, createPortal, findDOMNode } = ReactDOM;",
-            options: defaultOptions,
             errors: [
                 {
                     messageId: 'restrictedDestructuring',
@@ -223,7 +184,6 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
         // createFactory restrictions from react
         {
             code: "import { createFactory } from 'react';",
-            options: defaultOptions,
             errors: [
                 {
                     messageId: 'restrictedImport',
@@ -237,7 +197,6 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
         // hydrate restriction from react-dom
         {
             code: "import { hydrate } from 'react-dom';",
-            options: defaultOptions,
             errors: [
                 {
                     messageId: 'restrictedImport',
@@ -251,7 +210,6 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
         // unstable_renderSubtreeIntoContainer restriction from react-dom
         {
             code: "import { unstable_renderSubtreeIntoContainer } from 'react-dom';",
-            options: defaultOptions,
             errors: [
                 {
                     messageId: 'restrictedImport',
@@ -265,7 +223,6 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
         // unstable_flushControlled restriction from react-dom
         {
             code: "import { unstable_flushControlled } from 'react-dom';",
-            options: defaultOptions,
             errors: [
                 {
                     messageId: 'restrictedImport',
@@ -279,7 +236,6 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
         // unstable_createEventHandle restriction from react-dom
         {
             code: "import { unstable_createEventHandle } from 'react-dom';",
-            options: defaultOptions,
             errors: [
                 {
                     messageId: 'restrictedImport',
@@ -293,7 +249,6 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
         // unstable_runWithPriority restriction from react-dom
         {
             code: "import { unstable_runWithPriority } from 'react-dom';",
-            options: defaultOptions,
             errors: [
                 {
                     messageId: 'restrictedImport',
