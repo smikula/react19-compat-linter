@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a React 19 compatibility linter that helps identify deprecated React APIs in your project's bundled dependencies. React 19 removed several deprecated APIs (`ReactDOM.render`, `findDOMNode`, `unmountComponentAtNode`), and this tool scans not just your code but all bundled packages in `node_modules` to identify compatibility issues.
+This is a React 19 compatibility linter that helps identify deprecated React APIs in your project's bundled dependencies. React 19 removed several deprecated APIs (`ReactDOM.render`, `findDOMNode`, `unmountComponentAtNode`, `React.createFactory`), and this tool scans not just your code but all bundled packages in `node_modules` to identify compatibility issues.
 
 ### Architecture: Two-Part System
 
@@ -52,6 +52,12 @@ Run tests in watch mode:
 yarn test --watch
 ```
 
+### Sample
+```bash
+yarn sample
+```
+Runs `runLinter` against a sample project to verify the linting works end-to-end.
+
 ### CLI Usage (after build)
 ```bash
 node bin/react19-compat-linter.js ./modules-list.json
@@ -59,14 +65,28 @@ node bin/react19-compat-linter.js ./modules-list.json
 
 ## Development Notes
 
+### Validating Changes
+**Always run these three commands to validate any code change:**
+```bash
+yarn build
+yarn test
+yarn sample
+```
+This ensures the TypeScript compiles correctly, all tests pass, and the tool works end-to-end on real dependencies.
+
 ### ESLint Rule Testing
 Tests use `@typescript-eslint/rule-tester` which provides a structured way to test both valid and invalid code patterns. Each test case includes the code string and expected error messages.
 
 ### Default Restrictions
-The ESLint rule defaults to restricting these react-dom APIs:
+The ESLint rule defaults to restricting these deprecated React 19 APIs:
+
+**From `react-dom`:**
 - `findDOMNode`
 - `render`
 - `unmountComponentAtNode`
+
+**From `react`:**
+- `createFactory`
 
 The rule is configurable via the `restrictedImports` option to support other deprecated APIs or modules.
 
