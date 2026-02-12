@@ -13,13 +13,17 @@ const ruleTester = new RuleTester({
     },
 });
 
-// Common test configuration for react-dom restrictions
+// Common test configuration for react-dom and react restrictions
 const defaultOptions: [{ restrictedImports: { module: string; imports: string[] }[] }] = [
     {
         restrictedImports: [
             {
                 module: 'react-dom',
                 imports: ['findDOMNode', 'render', 'unmountComponentAtNode'],
+            },
+            {
+                module: 'react',
+                imports: ['createFactory'],
             },
         ],
     },
@@ -202,6 +206,20 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
                     messageId: 'restrictedImport',
                     data: {
                         importName: 'useEffect',
+                        moduleName: 'react',
+                    },
+                },
+            ],
+        },
+        // createFactory restrictions from react
+        {
+            code: "import { createFactory } from 'react';",
+            options: defaultOptions,
+            errors: [
+                {
+                    messageId: 'restrictedImport',
+                    data: {
+                        importName: 'createFactory',
                         moduleName: 'react',
                     },
                 },

@@ -50,6 +50,10 @@ export const noRestrictedImports = ESLintUtils.RuleCreator(f => f)({
                     module: 'react-dom',
                     imports: ['findDOMNode', 'render', 'unmountComponentAtNode'],
                 },
+                {
+                    module: 'react',
+                    imports: ['createFactory'],
+                },
             ],
         },
     ],
