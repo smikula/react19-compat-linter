@@ -48,7 +48,16 @@ export const noRestrictedImports = ESLintUtils.RuleCreator(f => f)({
             restrictedImports: [
                 {
                     module: 'react-dom',
-                    imports: ['findDOMNode', 'render', 'unmountComponentAtNode'],
+                    imports: [
+                        'findDOMNode',
+                        'render',
+                        'hydrate',
+                        'unmountComponentAtNode',
+                        'unstable_renderSubtreeIntoContainer',
+                        'unstable_flushControlled',
+                        'unstable_createEventHandle',
+                        'unstable_runWithPriority',
+                    ],
                 },
                 {
                     module: 'react',

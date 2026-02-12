@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a React 19 compatibility linter that helps identify deprecated React APIs in your project's bundled dependencies. React 19 removed several deprecated APIs (`ReactDOM.render`, `findDOMNode`, `unmountComponentAtNode`, `React.createFactory`), and this tool scans not just your code but all bundled packages in `node_modules` to identify compatibility issues.
+This is a React 19 compatibility linter that helps identify deprecated React APIs in your project's bundled dependencies. React 19 removed several deprecated APIs (`ReactDOM.render`, `ReactDOM.hydrate`, `findDOMNode`, `unmountComponentAtNode`, `React.createFactory`, and various unstable APIs), and this tool scans not just your code but all bundled packages in `node_modules` to identify compatibility issues.
 
 ### Architecture: Two-Part System
 
@@ -83,7 +83,12 @@ The ESLint rule defaults to restricting these deprecated React 19 APIs:
 **From `react-dom`:**
 - `findDOMNode`
 - `render`
+- `hydrate`
 - `unmountComponentAtNode`
+- `unstable_renderSubtreeIntoContainer`
+- `unstable_flushControlled`
+- `unstable_createEventHandle`
+- `unstable_runWithPriority`
 
 **From `react`:**
 - `createFactory`

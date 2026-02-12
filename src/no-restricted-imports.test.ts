@@ -19,7 +19,16 @@ const defaultOptions: [{ restrictedImports: { module: string; imports: string[] 
         restrictedImports: [
             {
                 module: 'react-dom',
-                imports: ['findDOMNode', 'render', 'unmountComponentAtNode'],
+                imports: [
+                    'findDOMNode',
+                    'render',
+                    'hydrate',
+                    'unmountComponentAtNode',
+                    'unstable_renderSubtreeIntoContainer',
+                    'unstable_flushControlled',
+                    'unstable_createEventHandle',
+                    'unstable_runWithPriority',
+                ],
             },
             {
                 module: 'react',
@@ -221,6 +230,76 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
                     data: {
                         importName: 'createFactory',
                         moduleName: 'react',
+                    },
+                },
+            ],
+        },
+        // hydrate restriction from react-dom
+        {
+            code: "import { hydrate } from 'react-dom';",
+            options: defaultOptions,
+            errors: [
+                {
+                    messageId: 'restrictedImport',
+                    data: {
+                        importName: 'hydrate',
+                        moduleName: 'react-dom',
+                    },
+                },
+            ],
+        },
+        // unstable_renderSubtreeIntoContainer restriction from react-dom
+        {
+            code: "import { unstable_renderSubtreeIntoContainer } from 'react-dom';",
+            options: defaultOptions,
+            errors: [
+                {
+                    messageId: 'restrictedImport',
+                    data: {
+                        importName: 'unstable_renderSubtreeIntoContainer',
+                        moduleName: 'react-dom',
+                    },
+                },
+            ],
+        },
+        // unstable_flushControlled restriction from react-dom
+        {
+            code: "import { unstable_flushControlled } from 'react-dom';",
+            options: defaultOptions,
+            errors: [
+                {
+                    messageId: 'restrictedImport',
+                    data: {
+                        importName: 'unstable_flushControlled',
+                        moduleName: 'react-dom',
+                    },
+                },
+            ],
+        },
+        // unstable_createEventHandle restriction from react-dom
+        {
+            code: "import { unstable_createEventHandle } from 'react-dom';",
+            options: defaultOptions,
+            errors: [
+                {
+                    messageId: 'restrictedImport',
+                    data: {
+                        importName: 'unstable_createEventHandle',
+                        moduleName: 'react-dom',
+                    },
+                },
+            ],
+        },
+        // unstable_runWithPriority restriction from react-dom
+        {
+            code: "import { unstable_runWithPriority } from 'react-dom';",
+            options: defaultOptions,
+            errors: [
+                {
+                    messageId: 'restrictedImport',
+                    data: {
+                        importName: 'unstable_runWithPriority',
+                        moduleName: 'react-dom',
                     },
                 },
             ],
