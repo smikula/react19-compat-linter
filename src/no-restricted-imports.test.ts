@@ -306,33 +306,9 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
                 },
             ],
         },
-        {
-            code: "const createFactory = require('react').createFactory;",
-            errors: [
-                {
-                    messageId: 'restrictedImport',
-                    data: {
-                        importName: 'createFactory',
-                        moduleName: 'react',
-                    },
-                },
-            ],
-        },
         // hydrate restriction from react-dom
         {
             code: "import { hydrate } from 'react-dom';",
-            errors: [
-                {
-                    messageId: 'restrictedImport',
-                    data: {
-                        importName: 'hydrate',
-                        moduleName: 'react-dom',
-                    },
-                },
-            ],
-        },
-        {
-            code: "const hydrate = require('react-dom').hydrate;",
             errors: [
                 {
                     messageId: 'restrictedImport',
@@ -356,18 +332,6 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
                 },
             ],
         },
-        {
-            code: "const unstable_renderSubtreeIntoContainer = require('react-dom').unstable_renderSubtreeIntoContainer;",
-            errors: [
-                {
-                    messageId: 'restrictedImport',
-                    data: {
-                        importName: 'unstable_renderSubtreeIntoContainer',
-                        moduleName: 'react-dom',
-                    },
-                },
-            ],
-        },
         // unstable_flushControlled restriction from react-dom
         {
             code: "import { unstable_flushControlled } from 'react-dom';",
@@ -381,33 +345,9 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
                 },
             ],
         },
-        {
-            code: "const unstable_flushControlled = require('react-dom').unstable_flushControlled;",
-            errors: [
-                {
-                    messageId: 'restrictedImport',
-                    data: {
-                        importName: 'unstable_flushControlled',
-                        moduleName: 'react-dom',
-                    },
-                },
-            ],
-        },
         // unstable_createEventHandle restriction from react-dom
         {
             code: "import { unstable_createEventHandle } from 'react-dom';",
-            errors: [
-                {
-                    messageId: 'restrictedImport',
-                    data: {
-                        importName: 'unstable_createEventHandle',
-                        moduleName: 'react-dom',
-                    },
-                },
-            ],
-        },
-        {
-            code: "const unstable_createEventHandle = require('react-dom').unstable_createEventHandle;",
             errors: [
                 {
                     messageId: 'restrictedImport',

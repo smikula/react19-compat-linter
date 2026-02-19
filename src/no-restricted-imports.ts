@@ -141,7 +141,8 @@ export const noRestrictedImports = ESLintUtils.RuleCreator(f => f)({
                 }
             },
             VariableDeclarator(node) {
-                // Check for require statements
+                // Check for require statements set to a variable
+                // const ReactDOM = require('react-dom');
                 if (
                     node.init &&
                     node.init.type === 'CallExpression' &&
@@ -156,6 +157,8 @@ export const noRestrictedImports = ESLintUtils.RuleCreator(f => f)({
                     namespaceIdentifiers.set(node.id.name, moduleName);
                 }
 
+                // Check for require() access
+                // const findDOMNode = require('react-dom').findDOMNode;
                 if (
                     node.init &&
                     node.init.type === 'MemberExpression' &&
@@ -167,7 +170,6 @@ export const noRestrictedImports = ESLintUtils.RuleCreator(f => f)({
                     node.init.object.arguments[0].type === 'Literal' &&
                     node.init.object.arguments[0].value
                 ) {
-                    // We just required a specific function from a module
                     const moduleName = node.init.object.arguments[0].value.toString(); //namespaceIdentifiers.get() || 'a';
 
                     const restriction = restrictedImports.find(r => r.module == moduleName);
