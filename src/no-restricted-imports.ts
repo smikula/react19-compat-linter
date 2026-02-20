@@ -170,7 +170,7 @@ export const noRestrictedImports = ESLintUtils.RuleCreator(f => f)({
                     node.init.object.arguments[0].type === 'Literal' &&
                     node.init.object.arguments[0].value
                 ) {
-                    const moduleName = node.init.object.arguments[0].value.toString(); //namespaceIdentifiers.get() || 'a';
+                    const moduleName = node.init.object.arguments[0].value.toString();
 
                     const restriction = restrictedImports.find(r => r.module == moduleName);
                     if (!restriction) {
