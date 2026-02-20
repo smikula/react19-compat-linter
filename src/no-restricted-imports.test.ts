@@ -25,6 +25,15 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
         {
             code: "import * as ReactDOM from 'react-dom';",
         },
+        {
+            code: "const { createPortal } = require('react-dom');",
+        },
+        {
+            code: "const createPortal = require('react-dom').createPortal;",
+        },
+        {
+            code: "const ReactDOM = require('react-dom');",
+        },
         // Namespace access of allowed methods
         {
             code: "import * as ReactDOM from 'react-dom';\nReactDOM.createPortal();",
@@ -32,19 +41,46 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
         {
             code: "import ReactDOM from 'react-dom';\nReactDOM.createRoot();",
         },
+        {
+            code: "const ReactDOM = require('react-dom');\nReactDOM.createRoot();",
+        },
         // Destructuring of allowed methods
         {
             code: "import * as ReactDOM from 'react-dom';\nconst { createPortal } = ReactDOM;",
         },
+        // Destructuring of allowed methods from require
+        {
+            code: "const ReactDOM = require('react-dom');\nconst { createPortal } = ReactDOM",
+        },
         // Imports from non-restricted modules
         {
             code: "import { useState } from 'react';",
+        },
+        // Non-restricted import from react
+        {
+            code: "const x = require('react').foo;",
+        },
+        // Destructuring of allowed methods from require
+        {
+            code: "const { useState, useEffect} = require('react');",
         },
     ],
     invalid: [
         // Named imports - restricted imports from react-dom
         {
             code: "import { findDOMNode } from 'react-dom';",
+            errors: [
+                {
+                    messageId: 'restrictedImport',
+                    data: {
+                        importName: 'findDOMNode',
+                        moduleName: 'react-dom',
+                    },
+                },
+            ],
+        },
+        {
+            code: "const findDOMNode = require('react-dom').findDOMNode;",
             errors: [
                 {
                     messageId: 'restrictedImport',
@@ -114,9 +150,33 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
                 },
             ],
         },
+        {
+            code: "const ReactDOM = require('react-dom');\nReactDOM.render();",
+            errors: [
+                {
+                    messageId: 'restrictedNamespaceAccess',
+                    data: {
+                        importName: 'render',
+                        moduleName: 'react-dom',
+                    },
+                },
+            ],
+        },
         // Destructuring - extracting restricted methods from namespace
         {
             code: "import * as ReactDOM from 'react-dom';\nconst { findDOMNode } = ReactDOM;",
+            errors: [
+                {
+                    messageId: 'restrictedDestructuring',
+                    data: {
+                        importName: 'findDOMNode',
+                        moduleName: 'react-dom',
+                    },
+                },
+            ],
+        },
+        {
+            code: "const { findDOMNode } = require('react-dom');",
             errors: [
                 {
                     messageId: 'restrictedDestructuring',
@@ -147,9 +207,61 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
                 },
             ],
         },
+        {
+            code: "const { render, createPortal, findDOMNode } = require('react-dom');",
+            errors: [
+                {
+                    messageId: 'restrictedDestructuring',
+                    data: {
+                        importName: 'render',
+                        moduleName: 'react-dom',
+                    },
+                },
+                {
+                    messageId: 'restrictedDestructuring',
+                    data: {
+                        importName: 'findDOMNode',
+                        moduleName: 'react-dom',
+                    },
+                },
+            ],
+        },
         // Multiple modules with restrictions
         {
             code: "import { findDOMNode } from 'react-dom';\nimport { useEffect } from 'react';",
+            options: [
+                {
+                    restrictedImports: [
+                        {
+                            module: 'react-dom',
+                            imports: ['findDOMNode'],
+                        },
+                        {
+                            module: 'react',
+                            imports: ['useEffect'],
+                        },
+                    ],
+                },
+            ],
+            errors: [
+                {
+                    messageId: 'restrictedImport',
+                    data: {
+                        importName: 'findDOMNode',
+                        moduleName: 'react-dom',
+                    },
+                },
+                {
+                    messageId: 'restrictedImport',
+                    data: {
+                        importName: 'useEffect',
+                        moduleName: 'react',
+                    },
+                },
+            ],
+        },
+        {
+            code: "const findDOMNode = require('react-dom').findDOMNode;\nimport { useEffect } from 'react';",
             options: [
                 {
                     restrictedImports: [
@@ -249,6 +361,18 @@ ruleTester.run('no-restricted-imports', noRestrictedImports, {
         // unstable_runWithPriority restriction from react-dom
         {
             code: "import { unstable_runWithPriority } from 'react-dom';",
+            errors: [
+                {
+                    messageId: 'restrictedImport',
+                    data: {
+                        importName: 'unstable_runWithPriority',
+                        moduleName: 'react-dom',
+                    },
+                },
+            ],
+        },
+        {
+            code: "const unstable_runWithPriority = require('react-dom').unstable_runWithPriority;",
             errors: [
                 {
                     messageId: 'restrictedImport',
