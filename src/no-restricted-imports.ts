@@ -141,17 +141,79 @@ export const noRestrictedImports = ESLintUtils.RuleCreator(f => f)({
                 }
             },
             VariableDeclarator(node) {
+                // Check for require statements set to a variable
+                // const ReactDOM = require('react-dom');
+                if (
+                    node.init &&
+                    node.init.type === 'CallExpression' &&
+                    node.init.callee.type === 'Identifier' &&
+                    node.init.callee.name == 'require' &&
+                    node.init.arguments.length == 1 &&
+                    node.init.arguments[0].type === 'Literal' &&
+                    node.init.arguments[0].value &&
+                    node.id.type === 'Identifier'
+                ) {
+                    const moduleName = node.init.arguments[0].value.toString();
+                    namespaceIdentifiers.set(node.id.name, moduleName);
+                }
+
+                // Check for require() access
+                // const findDOMNode = require('react-dom').findDOMNode;
+                if (
+                    node.init &&
+                    node.init.type === 'MemberExpression' &&
+                    node.init.object.type === 'CallExpression' &&
+                    node.init.object.callee.type === 'Identifier' &&
+                    node.init.object.callee.name == 'require' &&
+                    // Check arguments
+                    node.init.object.arguments.length == 1 &&
+                    node.init.object.arguments[0].type === 'Literal' &&
+                    node.init.object.arguments[0].value
+                ) {
+                    const moduleName = node.init.object.arguments[0].value.toString();
+
+                    const restriction = restrictedImports.find(r => r.module == moduleName);
+                    if (!restriction) {
+                        return;
+                    }
+
+                    if (node.init.property.type === 'Identifier') {
+                        const propertyName = node.init.property.name;
+                        if (
+                            propertyName &&
+                            restrictedImports.find(r => r.imports.find(y => y == propertyName))
+                        ) {
+                            context.report({
+                                node: node,
+                                messageId: 'restrictedImport',
+                                data: {
+                                    importName: propertyName,
+                                    moduleName,
+                                },
+                            });
+                        }
+                    }
+                }
                 // Check for destructuring from a namespace identifier
                 // e.g., const { findDOMNode } = ReactDOM;
-                if (
-                    node.id.type === 'ObjectPattern' &&
-                    node.init &&
-                    node.init.type === 'Identifier'
-                ) {
-                    const namespaceName = node.init.name;
+                if (node.id.type === 'ObjectPattern' && node.init) {
+                    let moduleName: string | undefined;
+                    if (node.init.type === 'Identifier') {
+                        const namespaceName = node.init.name;
 
-                    // Check if this identifier is a tracked namespace
-                    const moduleName = namespaceIdentifiers.get(namespaceName);
+                        // Check if this identifier is a tracked namespace
+                        moduleName = namespaceIdentifiers.get(namespaceName);
+                    } else if (
+                        node.init.type === 'CallExpression' &&
+                        node.init.callee.type === 'Identifier' &&
+                        node.init.callee.name === 'require' &&
+                        node.init.arguments.length == 1 &&
+                        node.init.arguments[0].type === 'Literal' &&
+                        node.init.arguments[0].value
+                    ) {
+                        moduleName = node.init.arguments[0].value.toString();
+                    }
+
                     if (!moduleName) {
                         return;
                     }
