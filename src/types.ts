@@ -23,5 +23,5 @@ export interface LinterConfig {
 
 export interface LinterResult {
     packages: LinterPackageResult[];
-    isLinterCompliant?: boolean;
+    isLinterCompliant: boolean;
 }
