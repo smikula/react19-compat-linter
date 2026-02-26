@@ -17,6 +17,11 @@ export interface LinterPackageResult {
     files: LinterFileResult[];
 }
 
+export interface LinterConfig {
+    whitelist?: string[];
+}
+
 export interface LinterResult {
     packages: LinterPackageResult[];
+    isLinterCompliant?: boolean;
 }

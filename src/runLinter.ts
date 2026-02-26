@@ -3,7 +3,7 @@ import * as path from 'path';
 import { readFile } from 'fs/promises';
 import { parseFilePath } from './utils/parseFilePath';
 import { getPackageVersion } from './utils/getPackageVersion';
-import type { LinterFileResult, LinterPackageResult, LinterResult } from './types';
+import type { LinterFileResult, LinterPackageResult, LinterResult, LinterConfig } from './types';
 
 interface PackageMapEntry {
     packageName: string;
@@ -11,7 +11,10 @@ interface PackageMapEntry {
     files: LinterFileResult[];
 }
 
-export async function runLinter(modulesListPath: string): Promise<LinterResult> {
+export async function runLinter(
+    modulesListPath: string,
+    config?: LinterConfig
+): Promise<LinterResult> {
     const modulesList = await loadModulesList(modulesListPath);
     const eslint = createLinter();
     const allResults = await eslint.lintFiles(modulesList);
@@ -19,7 +22,13 @@ export async function runLinter(modulesListPath: string): Promise<LinterResult> 
     const files = buildFileResults(filteredResults);
     const packages = await groupFilesByPackage(files);
 
-    return { packages };
+    // Build violationsNotInWhitelist using a local whitelist
+    const whitelist = config && Array.isArray(config.whitelist) ? config.whitelist : [];
+    const violationsNotInWhitelist = packages.filter(pkg => !whitelist.includes(pkg.packageName));
+
+    const isLinterCompliant = violationsNotInWhitelist.length === 0;
+
+    return { packages, isLinterCompliant };
 }
 
 async function loadModulesList(modulesListPath: string): Promise<string[]> {
