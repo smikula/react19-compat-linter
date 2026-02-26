@@ -18,10 +18,10 @@ export interface LinterPackageResult {
 }
 
 export interface LinterConfig {
-    whitelist?: string[];
+    packageExceptions?: string[];
 }
 
 export interface LinterResult {
     packages: LinterPackageResult[];
-    isLinterCompliant: boolean;
+    isCompliant: boolean;
 }

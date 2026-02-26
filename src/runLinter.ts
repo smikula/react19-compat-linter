@@ -23,12 +23,15 @@ export async function runLinter(
     const packages = await groupFilesByPackage(files);
 
     // Build violationsNotInWhitelist using a local whitelist
-    const whitelist = config && Array.isArray(config.whitelist) ? config.whitelist : [];
-    const violationsNotInWhitelist = packages.filter(pkg => !whitelist.includes(pkg.packageName));
+    const packageExceptions =
+        config && Array.isArray(config.packageExceptions) ? config.packageExceptions : [];
+    const violationsNotInWhitelist = packages.filter(
+        pkg => !packageExceptions.includes(pkg.packageName)
+    );
 
-    const isLinterCompliant = violationsNotInWhitelist.length === 0;
+    const isCompliant = violationsNotInWhitelist.length === 0;
 
-    return { packages, isLinterCompliant };
+    return { packages, isCompliant };
 }
 
 async function loadModulesList(modulesListPath: string): Promise<string[]> {
