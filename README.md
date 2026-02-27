@@ -53,3 +53,14 @@ runLinter('./modules-list.json').then(result => {
   console.log(`Found violations in ${result.packages.length} packages.`);
 });
 ```
+
+When calling via the API, you can optionally add a config object with a list of package exceptions. The result will contain isCompliant, which will be true if there are no violations outside the list of package exceptions:
+
+```javascript
+const { runLinter } = require('react19-compat-linter');
+const linterConfig = { packageExceptions: ['package1', 'package2'] };
+
+runLinter('./modules-list.json', linterConfig).then(result => {
+  console.log(`Found violations in ${result.packages.length} packages. Is compliant: ${result.isCompliant}`);
+});
+```
