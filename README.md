@@ -38,10 +38,11 @@ When you run webpack, this plugin will generate a JSON file containing all bundl
 
 ### 3. Run the linter
 
-You can run the linter via the command line:
+You can run the linter via the command line (with optional config file):
 
 ```bash
 npm react19-compat-linter ./modules-list.json
+npm react19-compat-linter ./modules-list.json ./config.json
 ```
 
 Or integrate it into your build via the API:
@@ -64,3 +65,7 @@ runLinter('./modules-list.json', linterConfig).then(result => {
   console.log(`Found violations in ${result.packages.length} packages. Is compliant: ${result.isCompliant}`);
 });
 ```
+
+### 4. Config options
+#### packageExceptions
+A list of packages where violations are expected. All violations will be reported, but the result will only be compliant if there are no violations outside excepted packages.
