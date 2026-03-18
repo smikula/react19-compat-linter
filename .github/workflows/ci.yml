@@ -27,3 +27,6 @@ jobs:
 
       - name: Run tests
         run: yarn test
+
+      - name: Run sample
+        run: yarn sample
