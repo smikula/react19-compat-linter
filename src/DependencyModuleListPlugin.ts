@@ -19,17 +19,8 @@ export class DependencyModuleListPlugin {
                     const filePaths: string[] = [];
                     for (const module of modules) {
                         const resource = (module as NormalModule).resource;
-                        if (resource) {
-                            if (shouldIncludeModule(resource)) {
-                                console.log(`[DependencyModuleListPlugin] included: ${resource}`);
-                                filePaths.push(resource);
-                            } else {
-                                console.log(`[DependencyModuleListPlugin] skipped: ${resource}`);
-                            }
-                        } else {
-                            console.log(
-                                `[DependencyModuleListPlugin] skipped (no resource): ${module.identifier()}`
-                            );
+                        if (resource && shouldIncludeModule(resource)) {
+                            filePaths.push(resource);
                         }
                     }
 
