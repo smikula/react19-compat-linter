@@ -23,6 +23,7 @@ The package is intentionally split into two decoupled components:
   - Direct named imports: `import { findDOMNode } from 'react-dom'`
   - Namespace access: `ReactDOM.findDOMNode()`
   - Destructuring: `const { findDOMNode } = ReactDOM`
+- **src/require-csstransition-noderefs.ts** - Custom ESLint rule that detects uses of CSSTransition from the react-transition-group package that do not have a `nodeRef` prop. Detected uses will go down a code path that calls removed API `findDOMNode`.
 - **src/eslint.config.ts** - ESLint flat config that registers and enables the custom rule
 - **bin/react19-compat-linter.js** - CLI entry point
 
