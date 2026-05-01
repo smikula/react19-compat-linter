@@ -65,7 +65,7 @@ function buildFileResults(results: ESLint.LintResult[]): LinterFileResult[] {
     return results.map(result => ({
         filePath: result.filePath,
         violations: result.messages.map(msg => {
-            const { importName, moduleName } = parseViolationMessage(msg.message);
+            const { importName, moduleName } = parseViolationMessage(msg.ruleId, msg.message);
             return {
                 line: msg.line,
                 column: msg.column,
@@ -104,7 +104,13 @@ async function groupFilesByPackage(files: LinterFileResult[]): Promise<LinterPac
     return packages;
 }
 
-function parseViolationMessage(message: string): { importName: string; moduleName: string } {
+function parseViolationMessage(
+    ruleId: string | null,
+    message: string
+): { importName: string; moduleName: string } {
+    if (ruleId === 'react19-compat-linter/require-csstransition-noderefs') {
+        return { importName: '', moduleName: '' };
+    }
     // This regex must match the error messages in no-restricted-imports.ts
     const match = message.match(
         /(?:Importing|Accessing|Destructuring) (.+) from "(.+)" is not allowed\./
