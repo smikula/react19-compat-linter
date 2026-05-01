@@ -53,7 +53,9 @@ function filterViolationResults(allResults: ESLint.LintResult[]): ESLint.LintRes
         .map(result => ({
             ...result,
             messages: result.messages.filter(
-                msg => msg.ruleId === 'react19-compat-linter/no-restricted-imports'
+                msg =>
+                    msg.ruleId === 'react19-compat-linter/no-restricted-imports' ||
+                    msg.ruleId === 'react19-compat-linter/require-csstransition-noderefs'
             ),
         }))
         .filter(result => result.messages.length > 0);
